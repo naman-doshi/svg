@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20001102//EN" 
+"http://www.w3.org/TR/2000/CR-SVG-20001102/DTD/svg-20001102.dtd"> 
+
+<svg width="1000" height="1000"
+xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+<defs>
+  <style type="text/css">
+  <![CDATA[
+
+    text.C { text-anchor:middle; }   /* centred */
+    text.R { text-anchor:end; }      /* right-justified */
+    text.title { font-size:16px; font-family:Arial,Helvetica,sansserif; font-weight:bold; }
+
+    .bar { stroke:#888888; stroke-width:0.5px; }
+    .unordered { fill:#E7CACA; stroke:#B54040; }
+    .bg {fill:#888888;}
+    .shuffled { fill:#E7CACA;}
+    .home {fill:#DEE7BE;}
+    .selected {fill:#FFFF66;}
+    .error {fill:#F72424;}
+
+    .tex {font-size: 32px; font-weight:bold; }
+
+    .sep { stroke:#444444; stroke-width:0.8px; stroke-dasharray:5,3; }
+    .border { stroke: #AAAAAA; stroke-width:3px; fill:#FFFFF0; }
+
+    .pink { fill:#FFB5DC; }
+    .skyblue { fill:#87CEEB; }
+  ]]>
+  </style>
+
+  <!-- define an equilateral triangle centred at the origin with base 10px long. 8.66 = 10sind(60) -->
+  <g id="triangle">
+    <path  d="M0,-4.33 l-5,8.66 h10z" />  <!-- Moveto; relative lineto; relative horizontal lineto; close path -->
+  </g>
+
+  <!-- Adapted from http://ledrug.wordpress.com/2010/09/30/learning-svg-lesson-2/ -->
+
+  <filter id="bevel" x0="-50%" y0="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+    <feOffset dy="-1" dx="-1"/>
+    <feComposite in2="SourceAlpha" operator="arithmetic"
+            k2="-1" k3="1" result="hlDiff"/>
+    <feFlood flood-color="black" flood-opacity="1.0"/>
+    <feComposite in2="hlDiff" operator="in"/>
+    <feComposite in2="SourceGraphic" operator="over" result="withGlow"/>
+
+    <feOffset in="blur" dy="2" dx="2"/>
+    <feComposite in2="SourceAlpha" operator="arithmetic"
+            k2="-1" k3="1" result="shadowDiff"/>
+    <feFlood flood-color="white" flood-opacity="0.7"/>
+    <feComposite in2="shadowDiff" operator="in"/>
+    <feComposite in2="withGlow" operator="over"/>
+  </filter>
+
+</defs>
+<rect class="border" x="0" y="0" width="1000" height="1000" />
+<rect id="" class="unordered" filter="" x="400" y="100" width="100" height="100" >
+  <animate attributeName="y" fill="freeze" begin="0s" dur="5s" to="700" />
+</rect>
+<rect id="" class="unordered" filter="" x="400" y="700" width="100" height="100" >
+  <animate attributeName="y" fill="freeze" begin="0s" dur="5s" to="100" />
+</rect>
+<rect id="" class="" filter="" x="100" y="100" width="50" height="50" >
+  <animate attributeName="opacity" fill="freeze" begin="0s" dur="0.01s" to="0" />
+  <animate attributeName="opacity" fill="freeze" begin="2.1s" dur="0.01s" to="1" />
+</rect>

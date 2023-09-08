@@ -1,0 +1,52 @@
+
+<defs>
+  <style type="text/css">
+  <![CDATA[
+
+    text.C { text-anchor:middle; }   /* centred */
+    text.R { text-anchor:end; }      /* right-justified */
+    text.title { font-size:16px; font-family:Arial,Helvetica,sansserif; font-weight:bold; }
+
+    .bar { stroke:#888888; stroke-width:0.5px; }
+    .unordered { fill:#E7CACA; stroke:#B54040; }
+    .bg {fill:#888888;}
+    .shuffled { fill:#E7CACA;}
+    .home {fill:#DEE7BE;}
+    .selected {fill:#FFFF66;}
+    .error {fill:#F72424;}
+
+    .tex {font-size: 32px; font-weight:bold; }
+
+    .sep { stroke:#444444; stroke-width:0.8px; stroke-dasharray:5,3; }
+    .border { stroke: #AAAAAA; stroke-width:3px; fill:#FFFFF0; }
+
+    .pink { fill:#FFB5DC; }
+    .skyblue { fill:#87CEEB; }
+  ]]>
+  </style>
+
+  <!-- define an equilateral triangle centred at the origin with base 10px long. 8.66 = 10sind(60) -->
+  <g id="triangle">
+    <path  d="M0,-4.33 l-5,8.66 h10z" />  <!-- Moveto; relative lineto; relative horizontal lineto; close path -->
+  </g>
+
+  <!-- Adapted from http://ledrug.wordpress.com/2010/09/30/learning-svg-lesson-2/ -->
+
+  <filter id="bevel" x0="-50%" y0="-50%" width="200%" height="200%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
+    <feOffset dy="-1" dx="-1"/>
+    <feComposite in2="SourceAlpha" operator="arithmetic"
+            k2="-1" k3="1" result="hlDiff"/>
+    <feFlood flood-color="black" flood-opacity="1.0"/>
+    <feComposite in2="hlDiff" operator="in"/>
+    <feComposite in2="SourceGraphic" operator="over" result="withGlow"/>
+
+    <feOffset in="blur" dy="2" dx="2"/>
+    <feComposite in2="SourceAlpha" operator="arithmetic"
+            k2="-1" k3="1" result="shadowDiff"/>
+    <feFlood flood-color="white" flood-opacity="0.7"/>
+    <feComposite in2="shadowDiff" operator="in"/>
+    <feComposite in2="withGlow" operator="over"/>
+  </filter>
+
+</defs>
