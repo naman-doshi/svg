@@ -6,15 +6,15 @@ import time
 # You may need to run this code twice to generate output, or maybe it's a quirk with my laptop
 
 tem = setTemplate('template.svg', 1000, 1000)
-rect = rectangle(level=0, x=400, y=100, width=100, height=100, class_=['unordered'])
-rect2 = rectangle(level=0, x=400, y=700, width=100, height=100, class_=['unordered'])
+rect = circle(450, 150, 50, class_=['unordered'])
+rect2 = circle(450, 750, 50, class_=['unordered'])
 
 a1 = animation()
-a1.addImplicit('y', 700, 5, 0)
+a1.addImplicit('cy', 700, 5, 0)
 rect.add(a1)
 
 a2 = animation()
-a2.addImplicit('y', 100, 5, 0)
+a2.addImplicit('cy', 100, 5, 0)
 rect2.add(a2)
 
 #Havent accounted for enlargements in intersections yet
@@ -36,12 +36,7 @@ def spawnObject(j):
 
 for i in range(0, 51):
   j = i/10
-  x1, y1 = rect.locate(j)
-  x2, y2 = rect2.locate(j)
-  s1 = [x1-50, y1-50, x1+50, y1+50]
-  s2 = [x2-50, y2-50, x2+50, y2+50]
-  if intersect(s1, s2):
+  if collides(rect, rect2, j):
     spawnObject(j)
     print(f'intersection at time {j}')
     break
-

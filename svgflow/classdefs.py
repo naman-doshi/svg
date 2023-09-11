@@ -9,6 +9,21 @@ def intersect(s1, s2):
     else:
         return True
 
+def collides(shape1, shape2, time):
+    if isinstance(shape1, rectangle) and isinstance(shape2, rectangle):
+        x1, y1 = shape1.locate(time)
+        x2, y2 = shape2.locate(time)
+        s1 = [x1-shape1.width/2, y1-shape1.height/2, x1+shape1.width/2, y1+shape1.height/2]
+        s2 = [x2-shape2.width/2, y2-shape2.height/2, x2+shape2.width/2, y2+shape2.height/2]
+        return intersect(s1, s2)
+    if isinstance(shape1, circle) and isinstance(shape2, circle):
+        x1, y1 = shape1.locate(time)
+        x2, y2 = shape2.locate(time)
+        dx = x1 - x2
+        dy = y1 - y2
+        ds = dx**2 + dy**2
+        return ds**0.5 <= shape1.r + shape2.r
+    assert 1==0, "Only collisions between 2x circle and 2x rectangle are supported"
 
 class animation:
     # attributeName can be anything: x, y, fill, stroke etc.

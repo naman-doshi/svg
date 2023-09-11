@@ -58,12 +58,12 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
 
 </defs>
 <rect class="border" x="0" y="0" width="1000" height="1000" />
-<rect id="" class="unordered" filter="" x="400" y="100" width="100" height="100" >
-  <animate attributeName="y" fill="freeze" begin="0s" dur="5s" to="700" />
-</rect>
-<rect id="" class="unordered" filter="" x="400" y="700" width="100" height="100" >
-  <animate attributeName="y" fill="freeze" begin="0s" dur="5s" to="100" />
-</rect>
+<circle id="" class="unordered" cx="450" cy="150" r="50" >
+  <animate attributeName="cy" fill="freeze" begin="0s" dur="5s" to="700" />
+</circle>
+<circle id="" class="unordered" cx="450" cy="750" r="50" >
+  <animate attributeName="cy" fill="freeze" begin="0s" dur="5s" to="100" />
+</circle>
 <rect id="" class="" filter="" x="100" y="100" width="50" height="50" >
   <animate attributeName="opacity" fill="freeze" begin="0s" dur="0.01s" to="0" />
   <animate attributeName="opacity" fill="freeze" begin="2.1s" dur="0.01s" to="1" />
