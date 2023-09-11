@@ -1,29 +1,4 @@
-f  = open('image.svg', 'a')
-
-# Rect intersection
-def intersect(s1, s2):
-    blax, blay, trax, tray = s1[0], s1[1], s1[2], s1[3]
-    blbx, blby, trbx, trby = s2[0], s2[1], s2[2], s2[3]
-    if blax > trbx or trax < blbx or blay > trby or tray < blby:
-        return False
-    else:
-        return True
-
-def collides(shape1, shape2, time):
-    if isinstance(shape1, rectangle) and isinstance(shape2, rectangle):
-        x1, y1 = shape1.locate(time)
-        x2, y2 = shape2.locate(time)
-        s1 = [x1-shape1.width/2, y1-shape1.height/2, x1+shape1.width/2, y1+shape1.height/2]
-        s2 = [x2-shape2.width/2, y2-shape2.height/2, x2+shape2.width/2, y2+shape2.height/2]
-        return intersect(s1, s2)
-    if isinstance(shape1, circle) and isinstance(shape2, circle):
-        x1, y1 = shape1.locate(time)
-        x2, y2 = shape2.locate(time)
-        dx = x1 - x2
-        dy = y1 - y2
-        ds = dx**2 + dy**2
-        return ds**0.5 <= shape1.r + shape2.r
-    assert 1==0, "Only collisions between 2x circle and 2x rectangle are supported"
+f  = open('image.svg', 'w')
 
 class animation:
     # attributeName can be anything: x, y, fill, stroke etc.
@@ -143,7 +118,7 @@ class rectangle:
     '''
     optional: rx (border radius) — yet to implement
     '''
-    def __init__(self, level, x, y, width, height, id="", class_=None, filter="", animations=None):
+    def __init__(self, x, y, width, height, id="", class_=None, filter="", animations=None):
         self.x = x
         self.y = y
         self.width = width
@@ -158,7 +133,6 @@ class rectangle:
             self.animations = animations
         self.id = id
         self.filter = filter
-        self.level = level
         self.validAnimations = []
 
     def locate(self, time):
@@ -231,6 +205,16 @@ class rectangle:
         self.animations.append(animateTransform('translate', begin, dur, f"{cx} {cy}", from_=f"0 0"))
         self.animations.append(animateTransform('scale', begin, dur, size, from_=f"1", additive="sum"))
     
+    def moveTo(self, shape2, begin, dur):
+        anim = animation()
+        if isinstance(shape2, circle):
+            anim.addImplicit('x', shape2.cx - shape2.r, dur, begin)
+            anim.addImplicit('y', shape2.cy - shape2.r, dur, begin)
+        elif isinstance(shape2, rectangle):
+            anim.addImplicit('x', shape2.x, dur, begin)
+            anim.addImplicit('y', shape2.y2, dur, begin)
+        self.animations.append(anim)
+    
     def add(self, anim):
         self.animations.append(anim)
         self.validAnimations.append(anim)
@@ -242,10 +226,10 @@ class rectangle:
         self.class_.append(clas)
 
     def draw(self):
-        f.write(f'{"  "*self.level}<rect id="{self.id}" class="{" ".join(self.class_)}" filter="{self.filter}" x="{self.x}" y="{self.y}" width="{self.width}" height="{self.height}" >\n')
+        f.write(f'<rect id="{self.id}" class="{" ".join(self.class_)}" filter="{self.filter}" x="{self.x}" y="{self.y}" width="{self.width}" height="{self.height}" >\n')
         for anim in self.animations:
-            f.write(anim.generate(self.level+1))
-        f.write(f'{"  "*self.level}</rect>\n')
+            f.write(anim.generate(1))
+        f.write(f'</rect>\n')
 
 class circle:
     def __init__(self, cx, cy, r, id="", class_=None, animations=None):
@@ -310,7 +294,7 @@ class circle:
 
                     if anim.attributeName == "cx":
                         x = (float(goingTo) - float(prev)) * elapsed + float(prev)
-                    elif anim.attributeName == "yy":
+                    elif anim.attributeName == "cy":
                         y = (float(goingTo) - float(prev)) * elapsed + float(prev)
 
             elif anim.dataType == "transform" and anim.type_ == 'translate':
@@ -327,6 +311,17 @@ class circle:
         cy = (size-1)*cy*-1
         self.animations.append(animateTransform('translate', begin, dur, f"{cx} {cy}", from_="0 0"))
         self.animations.append(animateTransform('scale', begin, dur, size, from_="1", additive="sum"))
+    
+    def moveTo(self, shape2, begin, dur):
+        anim = animation()
+        if isinstance(shape2, circle):
+            anim.addImplicit('cx', shape2.cx, dur, begin)
+            anim.addImplicit('cy', shape2.cy, dur, begin)
+        elif isinstance(shape2, rectangle):
+            anim.addImplicit('cx', shape2.x + shape2.width / 2, dur, begin)
+            anim.addImplicit('cy', shape2.y + shape2.height / 2, dur, begin)
+        self.animations.append(anim)
+
     
     def add(self, anim):
         self.animations.append(anim)
@@ -373,6 +368,59 @@ class text:
         for anim in self.animations:
             f.write(anim.generate())
         f.write(f'{self.text}</text>\n')
+
+class labelledCircle:
+    def __init__(self, cx, cy, r, label, id="", class_=None):
+        self.cx = cx
+        self.cy = cy
+        self.r = r
+        self.label = label
+        self.animations = []
+        self.id = id
+        self.circ = circle(cx, cy, r, id=id, class_=class_)
+        self.innertext = text(cx, cy, label)
+        self.class_ = class_
+        
+    
+    def addAnimation(self, anim):
+        self.animations.append(anim)
+
+    def deleteClass(self, clas):
+        self.circ.deleteClass(clas)
+
+    def addClass(self, clas):
+        self.circ.addClass(clas)
+
+    def draw(self):
+        grp = group(0, 0, shapes=[self.circ, self.innertext])
+        grp.draw()
+
+class labelledRectangle:
+    def __init__(self, x, y, width, height, label, id="", class_=None):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.label = label
+        self.animations = []
+        self.id = id
+        self.rect = rectangle(x, y, width, height, id=id, class_=class_)
+        self.innertext = text(x + width/2, y + height/2, label)
+        self.class_ = class_
+        
+    
+    def addAnimation(self, anim):
+        self.animations.append(anim)
+
+    def deleteClass(self, clas):
+        self.rect.deleteClass(clas)
+
+    def addClass(self, clas):
+        self.rect.addClass(clas)
+
+    def draw(self):
+        grp = group(0, 0, shapes=[self.rect, self.innertext])
+        grp.draw()
 
 class ellipse:
     def __init__(self, cx, cy, rx, ry, id="", class_=None, animations=None):

@@ -24,7 +24,7 @@ rect.draw()
 rect2.draw()
 
 def spawnObject(j):
-  obc = deepcopy(rectangle(level=0, x=100, y=100, width=50, height=50))
+  obc = deepcopy(rectangle(x=100, y=100, width=50, height=50))
   hide = deepcopy(animation())
   hide.addImplicit('opacity', 0, 0.01, 0)
   obc.add(hide)
