@@ -13,9 +13,13 @@ a1 = animation()
 a1.addImplicit('cy', 700, 5, 0)
 rect.add(a1)
 
-a2 = animation()
-a2.addImplicit('cy', 100, 5, 0)
-rect2.add(a2)
+obc = deepcopy(rectangle(x=100, y=100, width=50, height=50))
+hide = deepcopy(animation())
+hide.addImplicit('opacity', 0, 0.01, 0)
+obc.add(hide)
+show = deepcopy(animation())
+
+rect2.moveTo(obc, 0, 13)
 
 #Havent accounted for enlargements in intersections yet
 #rect.scale(2, 0, 1)
@@ -24,11 +28,6 @@ rect.draw()
 rect2.draw()
 
 def spawnObject(j):
-  obc = deepcopy(rectangle(x=100, y=100, width=50, height=50))
-  hide = deepcopy(animation())
-  hide.addImplicit('opacity', 0, 0.01, 0)
-  obc.add(hide)
-  show = deepcopy(animation())
   show.addImplicit('opacity', 1, 0.01, j)
   obc.add(show)
   obc.draw()

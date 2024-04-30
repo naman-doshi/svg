@@ -138,6 +138,8 @@ class rectangle:
     def locate(self, time):
         x = self.x
         y = self.y
+        dx = 0
+        dy = 0
         for anim in self.validAnimations:
             if anim.attributeName != 'x' and anim.attributeName != 'y':
                 continue
@@ -188,8 +190,20 @@ class rectangle:
             elif anim.dataType == "transform" and anim.type_ == 'translate':
                 # we assume it's not additive
                 # this is a WIP
+                if anim.additive is not None:
+                    raise Exception('Additive animations not supported')
+                if time >= anim.begin + anim.dur:
+                    if anim.attributeName == "x":
+                        dx = anim.to
+                    elif anim.attributeName == "y":
+                        dy = anim.to
+                
                 if anim.begin <= time and time <= anim.begin + anim.dur:
-                    pass
+                    elapsed = (time - anim.begin) / anim.dur
+                    if anim.attributeName == "x":
+                        dx += (anim.to - x) * elapsed
+                    elif anim.attributeName == "y":
+                        y += (anim.to - y) * elapsed
 
         return (x + self.width / 2, y + self.height / 2)
 
@@ -206,14 +220,18 @@ class rectangle:
         self.animations.append(animateTransform('scale', begin, dur, size, from_=f"1", additive="sum"))
     
     def moveTo(self, shape2, begin, dur):
-        anim = animation()
+        x = animation()
+        y = animation()
         if isinstance(shape2, circle):
-            anim.addImplicit('x', shape2.cx - shape2.r, dur, begin)
-            anim.addImplicit('y', shape2.cy - shape2.r, dur, begin)
+            x.addImplicit('x', shape2.cx + shape2.r, dur, begin)
+            y.addImplicit('y', shape2.cy + shape2.r, dur, begin)
         elif isinstance(shape2, rectangle):
-            anim.addImplicit('x', shape2.x, dur, begin)
-            anim.addImplicit('y', shape2.y2, dur, begin)
-        self.animations.append(anim)
+            x.addImplicit('x', shape2.x, dur, begin)
+            y.addImplicit('y', shape2.y, dur, begin)
+        self.animations.append(x)
+        self.validAnimations.append(x)
+        self.animations.append(y)
+        self.validAnimations.append(y)
     
     def add(self, anim):
         self.animations.append(anim)
@@ -313,14 +331,18 @@ class circle:
         self.animations.append(animateTransform('scale', begin, dur, size, from_="1", additive="sum"))
     
     def moveTo(self, shape2, begin, dur):
-        anim = animation()
+        x = animation()
+        y = animation()
         if isinstance(shape2, circle):
-            anim.addImplicit('cx', shape2.cx, dur, begin)
-            anim.addImplicit('cy', shape2.cy, dur, begin)
+            x.addImplicit('cx', shape2.cx, dur, begin)
+            y.addImplicit('cy', shape2.cy, dur, begin)
         elif isinstance(shape2, rectangle):
-            anim.addImplicit('cx', shape2.x + shape2.width / 2, dur, begin)
-            anim.addImplicit('cy', shape2.y + shape2.height / 2, dur, begin)
-        self.animations.append(anim)
+            x.addImplicit('cx', shape2.x + shape2.width / 2, dur, begin)
+            y.addImplicit('cy', shape2.y + shape2.height / 2, dur, begin)
+        self.animations.append(x)
+        self.validAnimations.append(x)
+        self.animations.append(y)
+        self.validAnimations.append(y)
 
     
     def add(self, anim):

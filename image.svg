@@ -62,9 +62,10 @@ xmlns:xlink="http://www.w3.org/1999/xlink">
   <animate attributeName="cy" fill="freeze" begin="0s" dur="5s" to="700" />
 </circle>
 <circle id="" class="unordered" cx="450" cy="750" r="50" >
-  <animate attributeName="cy" fill="freeze" begin="0s" dur="5s" to="100" />
+  <animate attributeName="cx" fill="freeze" begin="0s" dur="13s" to="125.0" />
+  <animate attributeName="cy" fill="freeze" begin="0s" dur="13s" to="125.0" />
 </circle>
 <rect id="" class="" filter="" x="100" y="100" width="50" height="50" >
   <animate attributeName="opacity" fill="freeze" begin="0s" dur="0.01s" to="0" />
-  <animate attributeName="opacity" fill="freeze" begin="2.1s" dur="0.01s" to="1" />
+  <animate attributeName="opacity" fill="freeze" begin="3.5s" dur="0.01s" to="1" />
 </rect>
